@@ -1,8 +1,17 @@
 use bevy::prelude::*;
 
+const WIDTH: f32 = 800.;
+const HEIGHT: f32 = 600.;
+
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            primary_window: Some(Window {
+                resolution: (WIDTH, HEIGHT).into(),
+                ..default()
+            }),
+            ..default()
+        }))
         .add_startup_system(setup)
         .run();
 }
