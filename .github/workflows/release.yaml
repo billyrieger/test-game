@@ -50,6 +50,14 @@ jobs:
         with:
           path: ${{ env.binary }}.zip
           name: web
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.binary }}.zip
+          asset_name: ${{ env.binary }}-web-${{ steps.get_version.outputs.tag }}.zip
+          tag: ${{ github.ref }}
+          overwrite: true
 
   upload-to-itch:
     runs-on: ubuntu-latest
