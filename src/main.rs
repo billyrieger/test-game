@@ -27,9 +27,9 @@ fn main() {
             PIXELS_PER_METER,
         ))
         .add_plugin(SpewPlugin::<Spawnable, Transform>::default())
-        .add_startup_system(setup)
-        .add_spawner((Spawnable::Ball, spawn_ball))
+        .add_system(setup.on_startup())
         .add_system(spawn_ball_on_mouse_click)
+        .add_spawner((Spawnable::Ball, spawn_ball))
         .run();
 }
 
