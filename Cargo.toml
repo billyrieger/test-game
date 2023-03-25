@@ -9,7 +9,9 @@ publish = false
 
 [dependencies]
 bevy = { version = "0.10.0", default-features = false }
+bevy_rapier2d = {version = "0.21.0", features = ["wasm-bindgen"] }
 bevy_tweening = "0.7.0"
+spew = "0.2.1"
 
 [features]
 default = ["dev"]
