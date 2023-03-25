@@ -45,11 +45,6 @@ jobs:
         with:
           files: dist/
           dest: ${{ env.binary }}.zip
-      - name: Upload binaries to artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          path: ${{ env.binary }}.zip
-          name: web
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -58,6 +53,11 @@ jobs:
           asset_name: ${{ env.binary }}-web-${{ steps.get_version.outputs.tag }}.zip
           tag: ${{ github.ref }}
           overwrite: true
+      - name: Upload binaries to artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: ${{ env.binary }}.zip
+          name: web
 
   upload-to-itch:
     runs-on: ubuntu-latest
