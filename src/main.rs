@@ -1,4 +1,5 @@
 use bevy::{prelude::*, window::PrimaryWindow};
+use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
 use bevy_tweening::*;
 use spew::prelude::*;
@@ -27,6 +28,8 @@ fn main() {
             PIXELS_PER_METER,
         ))
         .add_plugin(SpewPlugin::<Spawnable, Transform>::default())
+        .add_plugin(LdtkPlugin)
+        .insert_resource(LevelSelection::default())
         .add_system(setup.on_startup())
         .add_system(spawn_ball_on_mouse_click)
         .add_spawner((Spawnable::Ball, spawn_ball))
@@ -36,8 +39,12 @@ fn main() {
 #[derive(Component)]
 struct MainCamera;
 
-fn setup(mut commands: Commands) {
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((Camera2dBundle::default(), MainCamera));
+    commands.spawn(LdtkWorldBundle {
+        ldtk_handle: asset_server.load("testing.ldtk"),
+        ..Default::default()
+    });
 }
 
 fn spawn_ball_on_mouse_click(
@@ -73,8 +80,5 @@ fn spawn_ball(
             transform,
             ..default()
         })
-        .insert((
-            RigidBody::Dynamic,
-            Collider::ball(0.5 * BALL_DIAMETER_PX),
-        ));
+        .insert((RigidBody::Dynamic, Collider::ball(0.5 * BALL_DIAMETER_PX)));
 }
