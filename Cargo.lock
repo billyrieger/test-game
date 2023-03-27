@@ -2997,7 +2997,7 @@ dependencies = [
 
 [[package]]
 name = "test-game"
-version = "0.0.2"
+version = "0.0.4"
 dependencies = [
  "bevy",
  "bevy_ecs_ldtk",
