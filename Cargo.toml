@@ -17,7 +17,20 @@ spew = "0.2.1"
 
 [features]
 default = ["dev"]
-core = ["bevy/animation", "bevy/bevy_asset", "bevy/bevy_core_pipeline", "bevy/bevy_render", "bevy/bevy_scene", "bevy/bevy_sprite", "bevy/bevy_text", "bevy/bevy_ui", "bevy/bevy_winit", "bevy/filesystem_watcher", "bevy/serialize", "bevy/png"]
+core = [
+    "bevy/animation",
+    "bevy/bevy_asset",
+    "bevy/bevy_core_pipeline",
+    "bevy/bevy_render",
+    "bevy/bevy_scene",
+    "bevy/bevy_sprite",
+    "bevy/bevy_text",
+    "bevy/bevy_ui",
+    "bevy/bevy_winit",
+    "bevy/filesystem_watcher",
+    "bevy/serialize",
+    "bevy/png",
+]
 dev = ["core", "bevy/x11", "bevy/dynamic_linking"]
 wasm = ["core"]
 

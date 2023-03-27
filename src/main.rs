@@ -1,38 +1,34 @@
-use bevy::{prelude::*, window::PrimaryWindow};
+use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 use bevy_rapier2d::prelude::*;
 use bevy_tweening::*;
-use spew::prelude::*;
 
-const WIDTH: f32 = 800.;
-const HEIGHT: f32 = 600.;
+const WIDTH: f32 = 640.;
+const HEIGHT: f32 = 480.;
 const PIXELS_PER_METER: f32 = 100.;
-const BALL_DIAMETER_PX: f32 = 64.;
-
-#[derive(Debug, PartialEq, Eq)]
-enum Spawnable {
-    Ball,
-}
+const GRID_SIZE: f32 = 16.;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins.set(WindowPlugin {
-            primary_window: Some(Window {
-                resolution: (WIDTH, HEIGHT).into(),
-                ..default()
-            }),
-            ..default()
-        }))
+        .add_plugins(
+            DefaultPlugins
+                .set(ImagePlugin::default_nearest())
+                .set(WindowPlugin {
+                    primary_window: Some(Window {
+                        resolution: (WIDTH, HEIGHT).into(),
+                        ..default()
+                    }),
+                    ..default()
+                }),
+        )
         .add_plugin(TweeningPlugin)
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(
             PIXELS_PER_METER,
         ))
-        .add_plugin(SpewPlugin::<Spawnable, Transform>::default())
         .add_plugin(LdtkPlugin)
-        .insert_resource(LevelSelection::default())
-        .add_system(setup.on_startup())
-        .add_system(spawn_ball_on_mouse_click)
-        .add_spawner((Spawnable::Ball, spawn_ball))
+        .insert_resource(LevelSelection::Index(0))
+        .register_ldtk_entity::<PlayerBundle>("Player")
+        .add_systems((setup.on_startup(), center_camera_on_player.after(move_player), move_player))
         .run();
 }
 
@@ -43,42 +39,46 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn((Camera2dBundle::default(), MainCamera));
     commands.spawn(LdtkWorldBundle {
         ldtk_handle: asset_server.load("testing.ldtk"),
-        ..Default::default()
+        transform: Transform::from_xyz(-WIDTH / 2., -HEIGHT / 2., 0.).with_scale(Vec3::splat(1.)),
+        ..default()
     });
 }
 
-fn spawn_ball_on_mouse_click(
-    window_query: Query<&Window, With<PrimaryWindow>>,
-    camera_query: Query<(&Camera, &GlobalTransform), With<MainCamera>>,
-    mouse_input: Res<Input<MouseButton>>,
-    mut spawn_events: EventWriter<SpawnEvent<Spawnable, Transform>>,
+#[derive(Component, Default)]
+struct Player;
+
+#[derive(Bundle, LdtkEntity)]
+struct PlayerBundle {
+    player: Player,
+    #[sprite_sheet_bundle]
+    #[bundle]
+    sprite_sheet: SpriteSheetBundle,
+}
+
+fn center_camera_on_player(
+    mut q_camera: Query<&mut Transform, With<MainCamera>>,
+    q_player: Query<&Transform, (With<Player>, Without<MainCamera>)>,
 ) {
-    let window = window_query.single();
-    let (camera, camera_transform) = camera_query.single();
-    if mouse_input.just_pressed(MouseButton::Left) {
-        if let Some(position) = window
-            .cursor_position()
-            .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
-            .map(|ray| ray.origin.truncate())
-        {
-            spawn_events.send(SpawnEvent::with_data(
-                Spawnable::Ball,
-                Transform::from_xyz(position.x, position.y, 0.),
-            ));
-        }
+    let mut camera_transform = q_camera.single_mut();
+    if let Ok(player_transform) = q_player.get_single() {
+        camera_transform.translation.x = player_transform.translation.x - WIDTH / 2.;
+        camera_transform.translation.y = player_transform.translation.y - HEIGHT / 2.;
     }
 }
 
-fn spawn_ball(
-    In(transform): In<Transform>,
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-) {
-    commands
-        .spawn(SpriteBundle {
-            texture: asset_server.load("goat_circle.png"),
-            transform,
-            ..default()
-        })
-        .insert((RigidBody::Dynamic, Collider::ball(0.5 * BALL_DIAMETER_PX)));
+fn move_player(input: Res<Input<KeyCode>>, mut q_player: Query<&mut Transform, With<Player>>) {
+    for mut transform in q_player.iter_mut() {
+        if input.any_just_pressed([KeyCode::Left, KeyCode::A]) {
+            transform.translation.x -= GRID_SIZE;
+        }
+        else if input.any_just_pressed([KeyCode::Right, KeyCode::D]) {
+            transform.translation.x += GRID_SIZE;
+        }
+        else if input.any_just_pressed([KeyCode::Up, KeyCode::W]) {
+            transform.translation.y += GRID_SIZE;
+        }
+        else if input.any_just_pressed([KeyCode::Down, KeyCode::S]) {
+            transform.translation.y -= GRID_SIZE;
+        }
+    }
 }
