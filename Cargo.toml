@@ -11,6 +11,7 @@ publish = false
 bevy = { version = "0.10.0", default-features = false }
 bevy_ecs_ldtk = { version = "0.5.0", features = ["atlas"] }
 bevy_kira_audio = "0.15.0"
+bevy_particle_systems = "0.9.0"
 bevy_rapier2d = { version = "0.21.0", features = ["wasm-bindgen"] }
 bevy_tweening = "0.7.0"
 spew = "0.2.1"
@@ -43,3 +44,4 @@ opt-level = 3
 [patch.crates-io]
 bevy_ecs_ldtk = { version = "0.5.0", git = "https://github.com/Trouv/bevy_ecs_ldtk.git", rev = "d8e0c6d" }
 bevy_ecs_tilemap = { version = "0.9.0", git = "https://github.com/geieredgar/bevy_ecs_tilemap", branch = "bevy_track" }
+bevy_particle_systems = { version = "0.9.0", git = "https://github.com/abnormalbrain/bevy_particle_systems", rev = "3d4e1ad" }
