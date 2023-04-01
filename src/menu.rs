@@ -88,9 +88,9 @@ fn hover_buttons(
 
 fn play_button_on_click(
     mut state: ResMut<NextState<GameState>>,
-    mut interaction_query: Query<&Interaction, (Changed<Interaction>, With<PlayButton>)>,
+    mut button_query: Query<&Interaction, (Changed<Interaction>, With<PlayButton>)>,
 ) {
-    for interaction in &mut interaction_query {
+    for interaction in &mut button_query {
         match *interaction {
             Interaction::Clicked => {
                 state.set(GameState::InGame);
