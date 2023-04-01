@@ -3073,7 +3073,7 @@ dependencies = [
 
 [[package]]
 name = "test-game"
-version = "0.0.6"
+version = "0.0.7"
 dependencies = [
  "bevy",
  "bevy_asset_loader",
