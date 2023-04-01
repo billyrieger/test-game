@@ -17,4 +17,6 @@ impl Plugin for LoadingPlugin {
 pub struct GameAssets {
     #[asset(path = "textures/px.png")]
     pub px_texture: Handle<Image>,
+    #[asset(path = "fonts/Kenney Pixel.ttf")]
+    pub menu_font: Handle<Font>,
 }
