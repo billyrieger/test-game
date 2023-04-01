@@ -29,7 +29,6 @@ struct PlayButton;
 // =================
 
 fn setup_menu(mut commands: Commands, game_assets: Res<GameAssets>) {
-    commands.spawn(Camera2dBundle::default());
     commands
         .spawn(MainMenu)
         .insert(NodeBundle {
